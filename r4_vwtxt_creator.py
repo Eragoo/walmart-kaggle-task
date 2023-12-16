@@ -1,7 +1,7 @@
-
 import pandas as pd
 import numpy as np
 import pickle
+
 
 class VWtxtCreator(object):
 
@@ -18,19 +18,26 @@ class VWtxtCreator(object):
     def create_df_vw(self, _df, is_train):
 
         df = _df.copy()
-        df['datestr'] = map(lambda d:d.strftime('%Y%m%d'), df.date2) # it's slow..
-        df['id2'] = ( np.char.array(df.item_nbr) + "_" + np.char.array(df.store_nbr) + "_" + df.datestr )
-        
+        df['datestr'] = list(map(lambda d: d.strftime('%Y%m%d'), df.date2))  # it's slow..
+        # df['id2'] = (np.char.array(df.item_nbr) + "_" + np.char.array(df.store_nbr) + "_" + df.datestr)
+        df['id2'] = (
+                df['item_nbr'].astype(str) +
+                "_" +
+                df['store_nbr'].astype(str) +
+                "_" +
+                df['datestr'].astype(str)
+        )
+
         df = df.merge(
-              df_features[ ['item_nbr', 'store_nbr', 'date2',
-                            'ppr_fitted', 'rmean', 'include1', 'include2', 'include3'] ],
-              how = 'left',
-              on = ['item_nbr', 'store_nbr', 'date2']
-              )
+            df_features[['item_nbr', 'store_nbr', 'date2',
+                         'ppr_fitted', 'rmean', 'include1', 'include2', 'include3']],
+            how='left',
+            on=['item_nbr', 'store_nbr', 'date2']
+        )
 
         df['baseline'] = df.ppr_fitted
         df['include'] = df.include2
-        df['include_prediction'] = df.include3 # use for training, but predict as zero
+        df['include_prediction'] = df.include3  # use for training, but predict as zero
 
         # set index again
         df = df.set_index(_df.index)
@@ -40,25 +47,25 @@ class VWtxtCreator(object):
 
         # set y (only when train)
         if is_train:
-             df['y'] = df.log1p - df.baseline
+            df['y'] = df.log1p - df.baseline
         else:
-             df['y'] = 0.0 
+            df['y'] = 0.0
 
-        # exclude dates not effective for linear regression
+            # exclude dates not effective for linear regression
         df = df[df.include]
 
         return df
-        
+
     def write_txt(self, _df, fname):
         import csv
 
-        f = open( fname, 'wb' )
+        f = open(fname, 'wb')
         wtr = csv.writer(f)
         for i, row in _df.iterrows():
             newline = "{}".format(row.y)
             newline += (" |A wd{} we:{} hol:{} holwd:{} holwe:{}"
-                         .format(row.weekday, row.is_weekend, 
-                                 row.is_holiday, row.is_holiday_weekday, row.is_holiday_weekend))
+                        .format(row.weekday, row.is_weekend,
+                                row.is_holiday, row.is_holiday_weekday, row.is_holiday_weekend))
             newline += " |B ino{}".format(int(row.item_nbr))
             newline += " |C sno{}".format(int(row.store_nbr))
             newline += " |D date{}".format(int(row.datestr))
@@ -67,9 +74,10 @@ class VWtxtCreator(object):
             newline += " |M day{} month{} year{}".format(row.day, row.month, row.year)
             newline += " |W isRS:{} departF:{}".format(row.preciptotal_flag, row.depart_flag)
             newline += " |I id {} avl4 {} rmean {}".format(row.id2, row.include_prediction, row.baseline)
-            wtr.writerow( [newline] )
+            wtr.writerow([newline])
 
         f.close()
+
 
 vwtxt_creator = VWtxtCreator()
 

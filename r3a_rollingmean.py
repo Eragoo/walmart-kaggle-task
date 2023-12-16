@@ -17,7 +17,8 @@ def create_rollingmean(_df):
 
         # calculate rolling mean
         window = 21
-        df['rmean'] = pd.rolling_mean(df.log1p, window, center=True)
+        df_log = df.log1p
+        df['rmean'] = df_log.rolling(window, center=True).mean()
         df['rmean'] = df['rmean'].interpolate()
         df['rmean'] = df['rmean'].ffill()
         df['rmean'] = df['rmean'].bfill()
@@ -46,11 +47,13 @@ def create_rollingmean(_df):
 
     return pd.concat(dfs, ignore_index=True)
 
-df_train = pd.read_pickle("model/train2.pkl")
 
-store_item_nbrs_path = 'model/store_item_nbrs.csv'
-store_item_nbrs = pd.read_csv(store_item_nbrs_path)
-store_items = zip(store_item_nbrs.store_nbr, store_item_nbrs.item_nbr)
+if __name__ == '__main__':
+    df_train = pd.read_pickle("model/train2.pkl")
 
-df_rollingmean = create_rollingmean(df_train)
-df_rollingmean.to_pickle('model/df_rollingmean.pkl')
+    store_item_nbrs_path = 'model/store_item_nbrs.csv'
+    store_item_nbrs = pd.read_csv(store_item_nbrs_path)
+    store_items = zip(store_item_nbrs.store_nbr, store_item_nbrs.item_nbr)
+
+    df_rollingmean = create_rollingmean(df_train)
+    df_rollingmean.to_pickle('model/df_rollingmean.pkl')
