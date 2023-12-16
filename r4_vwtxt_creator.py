@@ -59,7 +59,7 @@ class VWtxtCreator(object):
     def write_txt(self, _df, fname):
         import csv
 
-        f = open(fname, 'wb')
+        f = open(fname, 'w')
         wtr = csv.writer(f)
         for i, row in _df.iterrows():
             newline = "{}".format(row.y)

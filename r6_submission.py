@@ -52,7 +52,7 @@ class SubmissionCreator(object):
         for index, row in df.iterrows():
             id = self.create_id(row)
             id2 = self.create_id2(row)
-            if prediction_dict.has_key(id2):
+            if id2 in prediction_dict:
                 log1p = prediction_dict[id2]
             else:
                 log1p = 0.0
