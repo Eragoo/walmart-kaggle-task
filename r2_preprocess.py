@@ -99,7 +99,7 @@ mask_train = [(sno_ino in valid_store_items) for sno_ino in zip(df_train['store_
 df_train = df_train[mask_train].copy()
 preprocess(df_train, True).to_pickle('model/train2.pkl')
 
-df_test =  pd.read_csv("data/test.csv")
-mask_test = [(sno_ino in valid_store_items) for sno_ino in zip(df_test['store_nbr'], df_test['item_nbr']) ]
-df_test =  df_test[mask_test].copy()
-preprocess(df_test,  False).to_pickle('model/test2.pkl')
+# df_test =  pd.read_csv("data/test.csv")
+# mask_test = [(sno_ino in valid_store_items) for sno_ino in zip(df_test['store_nbr'], df_test['item_nbr']) ]
+# df_test =  df_test[mask_test].copy()
+# preprocess(df_test,  False).to_pickle('model/test2.pkl')

@@ -22,12 +22,12 @@ def create_vaild_item_store_combinations(_df):
     store_item_nbrs = sorted(zip(store_nbrs, item_nbrs), key=lambda t: t[1] * 10000 + t[0])
 
     # пишемо результат в файлик
-    with open(store_item_nbrs_path, 'wb') as f:
+    with open(store_item_nbrs_path, 'w') as f:
         f.write("store_nbr,item_nbr\n")
         for sno, ino in store_item_nbrs:
             f.write("{},{}\n".format(sno, ino))
 
-
+# if __name__ == '__main__':
 store_item_nbrs_path = 'model/store_item_nbrs.csv'
 df_train = pd.read_csv("data/train.csv")
 create_vaild_item_store_combinations(df_train)
