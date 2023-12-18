@@ -55,5 +55,6 @@ if __name__ == '__main__':
     store_item_nbrs = pd.read_csv(store_item_nbrs_path)
     store_items = zip(store_item_nbrs.store_nbr, store_item_nbrs.item_nbr)
 
+    # рахуємо середнє (moving average), щоб прибрати кородкочасні перепади різкі і виявити глобальну динаміку
     df_rollingmean = create_rollingmean(df_train)
     df_rollingmean.to_pickle('model/df_rollingmean.pkl')

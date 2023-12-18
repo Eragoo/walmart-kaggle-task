@@ -5,7 +5,7 @@ import os.path
 
 
 def get_holidays(fpath):
-    # holidays are from http://www.timeanddate.com/holidays/us/ , holidays and some observances
+    # holidays from http://www.timeanddate.com/holidays/us/
 
     f = open(fpath)
     lines = f.readlines()
@@ -86,7 +86,7 @@ def preprocess(_df, is_train):
 
     return df
 
-
+# робимо препроцесінг даних (додаємо дані про погоду, блек фрайдей, свята і тд)
 # read dataframes
 key = pd.read_csv("data/key.csv")
 wtr = pd.read_csv("data/weather.csv")
@@ -101,9 +101,11 @@ valid_store_items = set(zip(store_item_nbrs.store_nbr, store_item_nbrs.item_nbr)
 df_train = pd.read_csv("data/train.csv")
 mask_train = [(sno_ino in valid_store_items) for sno_ino in zip(df_train['store_nbr'], df_train['item_nbr'])]
 df_train = df_train[mask_train].copy()
+# serialize dataframe
 preprocess(df_train, True).to_pickle('model/train2.pkl')
 
 df_test = pd.read_csv("data/test.csv")
 mask_test = [(sno_ino in valid_store_items) for sno_ino in zip(df_test['store_nbr'], df_test['item_nbr'])]
 df_test = df_test[mask_test].copy()
+# serialize dataframe
 preprocess(df_test, False).to_pickle('model/test2.pkl')
